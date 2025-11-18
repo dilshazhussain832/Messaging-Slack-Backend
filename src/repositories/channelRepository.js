@@ -3,7 +3,7 @@ import crudRepository from "./crudRepository.js";
 
 const channelRepository = {
     ...crudRepository(Channel),
-
+    
     
 };
 

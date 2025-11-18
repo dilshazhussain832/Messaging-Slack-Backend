@@ -43,6 +43,8 @@ export const signUpService = async (data) => {
                 'A user with this email already exists.'
             );
         }
+        //added by gpt 
+        throw error;
     }
 };
 
