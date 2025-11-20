@@ -1,10 +1,12 @@
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuidv4 } from 'uuid';
 
+import { addEmailToMailQueue } from '../producers/mailQueueProducer.js';
 import channelRepository from '../repositories/channelRepository.js';
 import userRepository from '../repositories/userRepository.js';
 import workspaceRepository from '../repositories/workspaceRepository.js';
 import  getWorkSpaceByJoinCode from '../repositories/workspaceRepository.js';
+import mailObject from '../utils/common/mailObject.js';
 import ClientError from '../utils/errors/clientError.js';
 import ValidationError from '../utils/errors/validationError.js';
 
@@ -14,7 +16,7 @@ const isUserAdminOfWorkspace = (workspace, userId) => {
         );
 };
 
-const isUserMemberOfWorkspace = (workspace, userId) => {
+export const isUserMemberOfWorkspace = (workspace, userId) => {
     return workspace.members.find(
             (member) => member.memberId.toString() === userId
         );
@@ -223,6 +225,14 @@ export const addMemberToWorkspaceService = async (workspaceId, memberId, role, u
             });
         }
         const response = await workspaceRepository.addMemberToWorkspace(workspaceId, memberId, role);
+
+        addEmailToMailQueue({
+            ...mailObject,
+            to: isValidUser.email,
+            subject: `Added to workspace: ${workspace.name}`,
+            text: `You have been added to the workspace: ${workspace.name} with the role of ${role}.`
+        })
+
         return response;
     } catch (error) {
         console.log('Add member to workspace service error', error);
