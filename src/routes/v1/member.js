@@ -1,7 +1,7 @@
 import express from 'express';
 
-import { isAuthenticated } from '../../middlewares/authMiddleware.js';
 import { isMemberPartOfWorkspaceController } from '../../controllers/memberController.js';
+import { isAuthenticated } from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
